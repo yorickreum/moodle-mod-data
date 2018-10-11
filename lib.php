@@ -2597,6 +2597,7 @@ abstract class data_preset_importer {
         }
         /* Now add the HTML templates to the settings array so we can update d */
         $result->settings->singletemplate     = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"singletemplate.html");
+        $result->settings->singletemplateteacher     = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"singletemplateteacher.html");
         $result->settings->listtemplate       = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"listtemplate.html");
         $result->settings->listtemplateheader = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"listtemplateheader.html");
         $result->settings->listtemplatefooter = $this->data_preset_get_file_contents($fs, $fileobj,$this->directory,"listtemplatefooter.html");
@@ -3490,7 +3491,7 @@ function data_extend_settings_navigation(settings_navigation $settings, navigati
 
         $templates = $datanode->add(get_string('templates', 'data'));
 
-        $templatelist = array ('listtemplate', 'singletemplate', 'asearchtemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
+        $templatelist = array ('listtemplate', 'singletemplate', 'singletemplateteacher', 'asearchtemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
         foreach ($templatelist as $template) {
             $templates->add(get_string($template, 'data'), new moodle_url('/mod/data/templates.php', array('d'=>$data->id,'mode'=>$template)));
         }
