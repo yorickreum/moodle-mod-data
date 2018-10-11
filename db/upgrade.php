@@ -59,6 +59,21 @@ function xmldb_data_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2017032800, 'data');
     }
 
+    if ($oldversion < 2018101102) {
+
+        // Define field singletemplateteacher to be added to data.
+        $table = new xmldb_table('data');
+        $field = new xmldb_field('singletemplateteacher', XMLDB_TYPE_TEXT, null, null, false, false, null, 'completionentries');
+
+        // Conditionally launch add field timemodified.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+
+        // Data savepoint reached.
+        upgrade_mod_savepoint(true, 2018101102, 'data');
+    }
+
     // Automatically generated Moodle v3.3.0 release upgrade line.
     // Put any upgrade step following this.
 

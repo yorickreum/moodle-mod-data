@@ -588,7 +588,7 @@ class data_field_base {     // Base class for Database Field Types (see field/*/
  *
  * @global object
  * @param object $data
- * @param string template [addtemplate, singletemplate, listtempalte, rsstemplate]
+ * @param string template [addtemplate, singletemplate, singletemplateteacher, listtempalte, rsstemplate]
  * @param int $recordid
  * @param bool $form
  * @param bool $update
@@ -640,6 +640,11 @@ function data_generate_default_template(&$data, $template, $recordid=0, $form=fa
             $cell->attributes['class'] = 'controls';
             $table->data[] = new html_table_row(array($cell));
         } else if ($template == 'singletemplate') {
+            $cell = new html_table_cell('##edit##  ##delete##  ##approve##  ##disapprove##  ##export##');
+            $cell->colspan = 2;
+            $cell->attributes['class'] = 'controls';
+            $table->data[] = new html_table_row(array($cell));
+        } else if ($template == 'singletemplateteacher') {
             $cell = new html_table_cell('##edit##  ##delete##  ##approve##  ##disapprove##  ##export##');
             $cell->colspan = 2;
             $cell->attributes['class'] = 'controls';
@@ -778,6 +783,9 @@ function data_replace_field_in_templates($data, $searchfieldname, $newfieldname)
     $newdata->singletemplate = str_ireplace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->singletemplate);
 
+    $newdata->singletemplateteacher = str_ireplace('[['.$searchfieldname.']]',
+        $prestring.$newfieldname.$poststring, $data->singletemplateteacher);
+
     $newdata->listtemplate = str_ireplace('[['.$searchfieldname.']]',
             $prestring.$newfieldname.$poststring, $data->listtemplate);
 
@@ -810,6 +818,10 @@ function data_append_new_field_to_templates($data, $newfieldname) {
 
     if (!empty($data->singletemplate)) {
         $newdata->singletemplate = $data->singletemplate.' [[' . $newfieldname .']]';
+        $change = true;
+    }
+    if (!empty($data->singletemplateteacher)) {
+        $newdata->singletemplateteacher = $data->singletemplateteacher.' [[' . $newfieldname .']]';
         $change = true;
     }
     if (!empty($data->addtemplate)) {
@@ -2688,7 +2700,7 @@ abstract class data_preset_importer {
             $overwrite = array_keys((array)$settings);
         } else {
             // only templates and sorting
-            $overwrite = array('singletemplate', 'listtemplate', 'listtemplateheader', 'listtemplatefooter',
+            $overwrite = array('singletemplate', 'singletemplateteacher', 'listtemplate', 'listtemplateheader', 'listtemplatefooter',
                                'addtemplate', 'rsstemplate', 'rsstitletemplate', 'csstemplate', 'jstemplate',
                                'asearchtemplate', 'defaultsortdir', 'defaultsort');
         }
@@ -3633,6 +3645,10 @@ function data_presets_export($course, $cm, $data, $tostorage=false) {
     fwrite($singletemplate, $data->singletemplate);
     fclose($singletemplate);
 
+    $singletemplateteacher = fopen($exportdir . '/singletemplateteacher.html', 'w');
+    fwrite($singletemplateteacher, $data->singletemplateteacher);
+    fclose($singletemplateteacher);
+
     $listtemplateheader = fopen($exportdir . '/listtemplateheader.html', 'w');
     fwrite($listtemplateheader, $data->listtemplateheader);
     fclose($listtemplateheader);
@@ -3677,6 +3693,7 @@ function data_presets_export($course, $cm, $data, $tostorage=false) {
     $filenames = array(
         'preset.xml',
         'singletemplate.html',
+        'singletemplateteacher.html',
         'listtemplateheader.html',
         'listtemplate.html',
         'listtemplatefooter.html',

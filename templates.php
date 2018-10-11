@@ -164,9 +164,10 @@ if (($mytemplate = data_submitted()) && confirm_sesskey()) {
 }
 
 /// If everything is empty then generate some defaults
-if (empty($data->addtemplate) and empty($data->singletemplate) and
+if (empty($data->addtemplate) and empty($data->singletemplate) and empty($data->singletemplateteacher) and
     empty($data->listtemplate) and empty($data->rsstemplate)) {
     data_generate_default_template($data, 'singletemplate');
+    data_generate_default_template($data, 'singletemplateteacher');
     data_generate_default_template($data, 'listtemplate');
     data_generate_default_template($data, 'addtemplate');
     data_generate_default_template($data, 'asearchtemplate');           //Template for advanced searches.

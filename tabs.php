@@ -42,6 +42,10 @@
         $row[] = new tabobject('single', new moodle_url('/mod/data/view.php', array('d' => $data->id, 'mode' => 'single')), get_string('single','data'));
     }
 
+    if ( has_capability('moodle/course:update', $context) ) {
+        $row[] = new tabobject('singleteacher', new moodle_url('/mod/data/view.php', array('d' => $data->id, 'mode' => 'singleteacher')), get_string('singleteacher','data'));
+    }
+
     // Add an advanced search tab.
     $row[] = new tabobject('asearch', new moodle_url('/mod/data/view.php', array('d' => $data->id, 'mode' => 'asearch')), get_string('search', 'data'));
 
@@ -79,7 +83,7 @@
 
     if ($currenttab == 'templates' and isset($mode) && isset($templatestab)) {
         $templatestab->inactive = true;
-        $templatelist = array ('listtemplate', 'singletemplate', 'asearchtemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
+        $templatelist = array ('listtemplate', 'singletemplate', 'singletemplateteacher', 'asearchtemplate', 'addtemplate', 'rsstemplate', 'csstemplate', 'jstemplate');
 
         $currenttab ='';
         foreach ($templatelist as $template) {

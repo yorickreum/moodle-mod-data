@@ -370,7 +370,11 @@ if ($showactivity) {
     // Print the tabs
     if ($record or $mode == 'single') {
         $currenttab = 'single';
-    } elseif($mode == 'asearch') {
+    }
+    elseif ($mode == 'singleteacher') {
+        $currenttab = 'singleteacher';
+    }
+    elseif($mode == 'asearch') {
         $currenttab = 'asearch';
     }
     else {
@@ -418,7 +422,7 @@ if ($showactivity) {
             data_search_entries($data, $cm, $context, $mode, $currentgroup, $search, $sort, $order, $page, $perpage, $advanced, $search_array, $record);
 
         // Advanced search form doesn't make sense for single (redirects list view).
-        if ($maxcount && $mode != 'single') {
+        if ($maxcount && $mode != 'single' && $mode != 'singleteacher') {
             data_print_preference_form($data, $perpage, $search, $sort, $order, $search_array, $advanced, $mode);
         }
 
@@ -484,7 +488,48 @@ if ($showactivity) {
 
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
 
-            } else {                                  // List template
+            }
+            elseif ( $mode == 'singleteacher' && has_capability('moodle/course:update', $context) ) { // Single template
+                $baseurl = 'view.php?d=' . $data->id . '&mode=single&';
+                if (!empty($search)) {
+                    $baseurl .= 'filter=1&';
+                }
+                if (!empty($page)) {
+                    $baseurl .= 'page=' . $page;
+                }
+                echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
+
+                if (empty($data->singletemplateteacher)){
+                    echo $OUTPUT->notification(get_string('nosingletemplate','data'));
+                    data_generate_default_template($data, 'singletemplateteacher', 0, false, false);
+                }
+
+                //data_print_template() only adds ratings for singletemplate which is why we're attaching them here
+                //attach ratings to data records
+                require_once($CFG->dirroot.'/rating/lib.php');
+                if ($data->assessed != RATING_AGGREGATE_NONE) {
+                    $ratingoptions = new stdClass;
+                    $ratingoptions->context = $context;
+                    $ratingoptions->component = 'mod_data';
+                    $ratingoptions->ratingarea = 'entry';
+                    $ratingoptions->items = $records;
+                    $ratingoptions->aggregate = $data->assessed;//the aggregation method
+                    $ratingoptions->scaleid = $data->scale;
+                    $ratingoptions->userid = $USER->id;
+                    $ratingoptions->returnurl = $CFG->wwwroot.'/mod/data/'.$baseurl;
+                    $ratingoptions->assesstimestart = $data->assesstimestart;
+                    $ratingoptions->assesstimefinish = $data->assesstimefinish;
+
+                    $rm = new rating_manager();
+                    $records = $rm->get_ratings($ratingoptions);
+                }
+
+                data_print_template('singletemplateteacher', $records, $data, $search, $page, false, new moodle_url($baseurl));
+
+                echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
+
+            }
+            else {                                  // List template
                 $baseurl = 'view.php?d='.$data->id.'&amp;';
                 //send the advanced flag through the URL so it is remembered while paging.
                 $baseurl .= 'advanced='.$advanced.'&amp;';
@@ -507,7 +552,7 @@ if ($showactivity) {
                 echo $OUTPUT->paging_bar($totalcount, $page, $nowperpage, $baseurl);
             }
 
-            if ($mode != 'single' && $canmanageentries) {
+            if ($mode != 'single' && $mode != 'singleteacher' && $canmanageentries) {
                 echo html_writer::empty_tag('input', array(
                         'type' => 'button',
                         'id' => 'checkall',

@@ -21,6 +21,7 @@
         <FIELD NAME="maxentries" TYPE="int" LENGTH="8" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="rssarticles" TYPE="int" LENGTH="4" NOTNULL="true" DEFAULT="0" SEQUENCE="false"/>
         <FIELD NAME="singletemplate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="singletemplateteacher" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="listtemplate" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="listtemplateheader" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="listtemplatefooter" TYPE="text" NOTNULL="false" SEQUENCE="false"/>
